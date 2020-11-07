@@ -49,3 +49,18 @@ class Product(models.Model):
             return self.image.url
         else:
             return ""
+
+    
+    def image_tag(self):
+        return mark_safe('<img src="{}" heights="70" width="60" />'.format(self.image.url))
+    image_tag.short_description = 'Image'
+
+
+
+class Images(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200, blank=True)
+    image = models.ImageField(blank=True, upload_to='product/')
+
+    def __str(self):
+        return self.title

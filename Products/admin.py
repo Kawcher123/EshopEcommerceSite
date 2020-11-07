@@ -1,18 +1,24 @@
 from django.contrib import admin
-from Products.models import Category,Product
+from Products.models import Category,Product,Images
 
 # Register your models here.
 
 admin.site.register(Category)
 
 
+admin.site.register(Images)
 
+
+class productImageInline(admin.TabularInline):
+    model = Images
+    extra = 5
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title', 'status', 'created_at', 'updated_at']
+    list_display = ['title', 'status', 'created_at', 'updated_at', 'image_tag']
     list_filter = ['title', 'created_at']
     list_per_page = 10
     search_fields = ['title', 'new_price', 'detail']
+    inlines = [productImageInline]
     prepopulated_fields = {'slug': ('title',)}
 
 
