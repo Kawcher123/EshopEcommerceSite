@@ -1,5 +1,5 @@
 from django.contrib import admin
-from Products.models import Category,Product,Images
+from Products.models import Category,Product,Images,Customer,Order,OrderItem,ShippingAddress
 
 # Register your models here.
 
@@ -14,7 +14,7 @@ class productImageInline(admin.TabularInline):
     extra = 5
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title', 'status', 'created_at', 'updated_at', 'image_tag']
+    list_display = ['title', 'status', 'created_at', 'updated_at', 'image']
     list_filter = ['title', 'created_at']
     list_per_page = 10
     search_fields = ['title', 'new_price', 'detail']
@@ -23,3 +23,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Product, ProductAdmin)
+admin.site.register(Customer)
+admin.site.register(Order)
+admin.site.register(OrderItem)
+admin.site.register(ShippingAddress)
