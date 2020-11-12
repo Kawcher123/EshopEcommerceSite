@@ -53,6 +53,7 @@ class Product(models.Model):
     slug = models.SlugField(null=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    digital_product=models.BooleanField(default=False,null=True,blank=True)
 
     def __str__(self):
         return self.title
@@ -98,6 +99,15 @@ class Order(models.Model):
         total=sum([item.quantity for item in orderitems])
 
         return total
+
+    @property
+    def shipping(self):
+        shipping=False
+        orderitems=self.orderitem_set.all()
+        for i in orderitems:
+            if i.product_name.digital_product:
+                shipping=True
+        return shipping
 
 
 

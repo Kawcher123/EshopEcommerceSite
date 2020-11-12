@@ -16,7 +16,7 @@ Checkout
 							<h2>Make Your Checkout Here</h2>
 							<p>Please register in order to checkout more quickly</p>
 							<!-- Form -->
-							<form class="form" method="post" action="#">
+							<form id="shipping-cart" class="form" method="post" action="#">
 								<div class="row">
 									<div class="col-lg-6 col-md-6 col-12">
 										<div class="form-group">
@@ -358,9 +358,10 @@ Checkout
 								<h2>CART  TOTALS</h2>
 								<div class="content">
 									<ul>
-										<li>Sub Total<span>$330.00</span></li>
+									<li>Total Items<span>{{order.get_cart_items}}</span></li>
+										<li>Sub Total<span>{{order.get_cart_total}}</span></li>
 										<li>(+) Shipping<span>$10.00</span></li>
-										<li class="last">Total<span>$340.00</span></li>
+										<li class="last">Total<span>{{order.get_cart_total}}</span></li>
 									</ul>
 								</div>
 							</div>
@@ -370,9 +371,7 @@ Checkout
 								<h2>Payments</h2>
 								<div class="content">
 									<div class="checkbox">
-										<label class="checkbox-inline" for="1"><input name="updates" id="1" type="checkbox"> Check Payments</label>
 										<label class="checkbox-inline" for="2"><input name="news" id="2" type="checkbox"> Cash On Delivery</label>
-										<label class="checkbox-inline" for="3"><input name="news" id="3" type="checkbox"> PayPal</label>
 									</div>
 								</div>
 							</div>
@@ -467,6 +466,16 @@ Checkout
 			</div>
 		</section>
 		<!-- End Shop Newsletter -->
+
+
+
+		<script type="text/javascript">
+		var shipping = '{{order.shipping}}'
+		if(shipping == 'False')
+		{
+			document.getElementById('shipping-cart').innerHTML = ''
+		}
+		</script>
 	
 {% endblock body %}
 
