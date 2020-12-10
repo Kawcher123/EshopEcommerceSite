@@ -28,16 +28,16 @@ Cart
 
 							{% for item in items %}
 							<tr>
-								<td class="image" data-title="No"><img src="https://via.placeholder.com/100x100" alt="#"></td>
+								<td class="image" data-title="No"><img src="{{item.product_name.image.url}}" alt="#"></td>
 								<td class="product-des" data-title="Description">
 									<p class="product-name"><a href="#">{{item.product_name.title}}</a></p>
-									<p class="product-des">Maboriosam in a tonto nesciung eget  distingy magndapibus.</p>
+									<p class="product-des">{{item.product_name.digital_product}}</p>
 								</td>
 								<td class="price" data-title="Price"><span>{{item.product_name.new_price}} </span></td>
 								<td class="qty" data-title="Qty"><!-- Input Order -->
 									<div class="input-group">
 										<div class="button minus">
-											<button type="button" data-product={{item.product_name.id}} class="btn btn-primary btn-number update-cart" data-action="remove" data-field="quant[1]">
+											<button type="button" data-product={{item.product_name.id}} class="btn btn-primary btn-number update-cart" data-action="remove" >
 												<i class="ti-minus"></i>
 											</button>
 										</div>
@@ -48,7 +48,7 @@ Cart
 									
 
 										<div class="button plus">
-											<button type="button" data-product={{item.product_name.id}} class="btn btn-primary btn-number update-cart" data-action="add" data-field="quant[1]">
+											<button type="button" data-product={{item.product_name.id}} class="btn btn-primary btn-number update-cart" data-action="add">
 												<i class="ti-plus"></i>
 											</button>
 										</div>
@@ -79,15 +79,7 @@ Cart
 						<div class="row">
 							<div class="col-lg-8 col-md-5 col-12">
 								<div class="left">
-									<div class="coupon">
-										<form action="#" target="_blank">
-											<input name="Coupon" placeholder="Enter Your Coupon">
-											<button class="btn">Apply</button>
-										</form>
-									</div>
-									<div class="checkbox">
-										<label class="checkbox-inline" for="2"><input name="news" id="2" type="checkbox"> Shipping (+10$)</label>
-									</div>
+									
 								</div>
 							</div>
 							<div class="col-lg-4 col-md-7 col-12">

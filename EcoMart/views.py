@@ -1,23 +1,28 @@
 from django.shortcuts import render
-from Products.models import Product, Order
+from Products.models import Product, Order, Category
+from EcoMart.models import Setting,ContactMessage,ContactForm
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.views.generic import CreateView
+from django.urls import reverse_lazy 
+from Products.utils import cookieCart,cartData
 # Create your views here.
 def home(request):
-    if request.user.is_authenticated:
-        customer=request.user.customer
-        order,created = Order.objects.get_or_create(customer=customer,complete=False)
-        items=order.orderitem_set.all()
-        cartItems=order.get_cart_items
-    else:
-        items=[]
-        order={'get_cart_total':0,'get_cart_items':0,'shipping':False}
-        cartItems=order['get_cart_items']
+    data=cartData(request)
+    cartItems=data['cartItems']
 
+    category=Category.objects.all()
     pro=Product.objects.all()
-    param={'pro':pro,'cartItems':cartItems}
+    param={'pro':pro,'cartItems':cartItems,'category':category}
     return render(request,"index.html",param)
 
 def aboutView(request):
     return render(request,"index.html",{})
 
-def contactView(request):
-    return render(request,"contact.html",{})
+
+
+class ContactUs(CreateView):
+    model=ContactMessage
+    form_class=ContactForm
+    template_name="contact.html"
+    success_url=reverse_lazy("contact")

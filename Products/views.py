@@ -1,7 +1,11 @@
 from django.shortcuts import render
-from Products.models import Product, Order, OrderItem
+from Products.models import Product, Order, OrderItem,ShippingAddress
 from django.http import JsonResponse
 import json
+import datetime
+from django.views.decorators.csrf import csrf_exempt
+from Products.utils import cookieCart, cartData,guestorder
+
 # Create your views here.
 
 def trackerView(request):
@@ -11,33 +15,31 @@ def searchView(request):
     return render(request,"index.html",{})
 
 def productView(request):
-    return render(request,"shop-grid.html")
+    data=cartData(request)
+    cartItems=data['cartItems']
+
+    pro=Product.objects.all()
+    param={'pro':pro,'cartItems':cartItems}
+    return render(request,"shop-grid.html",param)
+
+
 
 def checkoutView(request):
-    if request.user.is_authenticated:
-        customer=request.user.customer
-        order,created = Order.objects.get_or_create(customer=customer,complete=False)
-        items=order.orderitem_set.all()
-        cartItems=order.get_cart_items
-    else:
-        items=[]
-        order={'get_cart_total':0,'get_cart_items':0,'shipping':False}
-        cartItems=order['get_cart_items']
+    data=cartData(request)
+    cartItems=data['cartItems']
+    order=data['order']
+    items=data['items']
 
     context={'items':items,'order':order,'cartItems':cartItems}    
     return render(request,"checkout.html",context)
     
 
 def cartView(request):
-    if request.user.is_authenticated:
-        customer=request.user.customer
-        order,created = Order.objects.get_or_create(customer=customer,complete=False)
-        items=order.orderitem_set.all()
-        cartItems=order.get_cart_items
-    else:
-        items=[]
-        order={'get_cart_total':0,'get_cart_items':0,'shipping':False}
-        cartItems=order['get_cart_items']
+    data=cartData(request)
+    cartItems=data['cartItems']
+    order=data['order']
+    items=data['items']
+
 
     context={'items':items,'order':order,'cartItems':cartItems}
     return render(request,"cart.html",context)
@@ -71,3 +73,37 @@ def updateItem(request):
 
 
     return JsonResponse("item was added",safe=False)
+    
+
+def processorder(request):
+    transaction_id=datetime.datetime.now().timestamp()
+    data=json.loads(request.body)
+    if request.user.is_authenticated:
+        customer=request.user.customer
+        order,created=Order.objects.get_or_create(customer=customer,complete=False)
+ 
+ 
+    else:
+        customer,order=guestorder(request,data)
+    total=float(data['form']['total'])
+    order.transaction_id=transaction_id
+
+    if total== order.get_cart_total:
+            order.complete=True
+    order.save()
+
+    if order.shipping==True:
+        ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            address=data['shipping']['address1'],
+            city=data['shipping']['city'],
+            thana=data['shipping']['city'],
+            zipcode=data['shipping']['postalcode']
+            
+        )
+
+
+
+    print("data", request.body)
+    return JsonResponse("your order submitted",safe=False)

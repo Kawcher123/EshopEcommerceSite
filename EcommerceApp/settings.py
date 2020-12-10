@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'EcoMart',
     'Products',
+    'ckeditor',
+    'ckeditor_uploader',
+    'mptt',
+
 ]
 
 MIDDLEWARE = [
@@ -134,6 +138,30 @@ STATICFILES_DIRS = [
 MEDIA_URL='/media/'
 
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+
+
+
+SITE_ID = 1
+
+####################################
+    ##  CKEDITOR CONFIGURATION ##
+####################################
+
+CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
+
+CKEDITOR_UPLOAD_PATH = 'media/'
+CKEDITOR_IMAGE_BACKEND = "pillow"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': None,
+    },
+}
+
+
+
+
+
 
 LOGOUT_REDIRECT_URL='/admin/login/'
 LOGOUT_URL = "/accounts/logout/"

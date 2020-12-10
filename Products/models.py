@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils.html import mark_safe
+from ckeditor_uploader.fields import RichTextUploadingField
+from mptt.models import MPTTModel, TreeForeignKey
 # Create your models here.
 
 class Customer(models.Model):
@@ -14,18 +16,18 @@ class Customer(models.Model):
 
 
 
-class Category(models.Model):
+class Category(MPTTModel):
     status = (
         ('True', 'True'),
         ('False', 'False'),
     )
-    parent = models.ForeignKey(
+    parent = TreeForeignKey(
         'self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
 
     title = models.CharField(max_length=200)
     keywords = models.CharField(max_length=100)
     image = models.ImageField(blank=True, upload_to='category/')
-    details = models.TextField()
+    details = RichTextUploadingField()
     status = models.CharField(max_length=20, choices=status)
     slug = models.SlugField(null=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,6 +35,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
+
+    class MPTTMeta:
+        order_insertion_by = ['title']
 
 
 
@@ -48,7 +53,7 @@ class Product(models.Model):
     old_price = models.DecimalField(decimal_places=2, max_digits=15)
     amount = models.IntegerField(default=0)
     min_amount = models.IntegerField(default=3)
-    detail = models.TextField()
+    detail = RichTextUploadingField()
     status = models.CharField(max_length=20, choices=status)
     slug = models.SlugField(null=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -63,6 +68,11 @@ class Product(models.Model):
             return self.image.url
         else:
             return ""
+
+    def image_tag(self):
+        return mark_safe('<img src="{}" height="50" />'.format(self.image.url))
+
+    image_tag.short_description = 'Image'
 
 
 
@@ -105,7 +115,7 @@ class Order(models.Model):
         shipping=False
         orderitems=self.orderitem_set.all()
         for i in orderitems:
-            if i.product_name.digital_product:
+            if i.product_name.digital_product == False:
                 shipping=True
         return shipping
 
